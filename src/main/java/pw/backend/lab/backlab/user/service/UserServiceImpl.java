@@ -20,7 +20,7 @@ class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
-        Optional<User> existingUser = userRepository.findById(String.valueOf(user.getId()));
+        Optional<User> existingUser = userRepository.findById(user.getId());
         if (existingUser.isPresent()) {
             return userRepository.save(user);
         }

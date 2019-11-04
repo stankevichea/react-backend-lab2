@@ -1,5 +1,14 @@
 package pw.backend.lab.backlab.user;
 
+import pw.backend.lab.backlab.user.exception.FileStorageException;
+
+import pw.backend.lab.backlab.user.exception.MyUserNotFoundException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +29,13 @@ public class UserController {
         this.userService = userService;
     }
 
+
+   
+
     @PostMapping(path = "")
     public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
+
+       
         return ResponseEntity.ok().body(userRepository.save(user));
     }
 
@@ -31,8 +45,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable String userId) {
-        return ResponseEntity.ok().body(userRepository.findById(userId).orElseGet(User::new));
+    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+        return ResponseEntity.ok().body(userRepository.findById(userId).orElseThrow(() -> new MyUserNotFoundException("User not found with id " + userId)));
+    }
+
+    @GetMapping(path = "/login/{login}")
+    public ResponseEntity<List<User>> getUserByLogin(@PathVariable String login) {
+        return ResponseEntity.ok().body(userRepository.findAllByLogin(login));
     }
 
     @PutMapping(path = "")
